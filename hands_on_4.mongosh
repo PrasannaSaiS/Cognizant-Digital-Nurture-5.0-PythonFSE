@@ -1,0 +1,195 @@
+// =============================================================================
+// HANDS-ON 5: MongoDB — Document Modelling, CRUD & Aggregation
+// =============================================================================
+
+// -----------------------------------------------------------------------------
+// Task 1: Create the Collection and Insert Documents
+// -----------------------------------------------------------------------------
+
+// Step 60 & 61: Switch to/create the database and prepare collection context
+use college_nosql;
+
+// Step 62 & 63: Populate the collection with diverse sample data records
+db.feedback.insertMany([
+  {
+    student_id: 1,
+    course_code: 'CS101',
+    semester: '2022-ODD',
+    rating: 5,
+    comments: 'Excellent teaching and comprehensive coverage.',
+    tags: ['challenging', 'well-structured', 'good-examples'],
+    submitted_at: new ISODate('2022-11-30T10:15:00Z'),
+    attachments: [{ filename: 'notes.pdf', size_kb: 240 }]
+  },
+  {
+    student_id: 2,
+    course_code: 'CS101',
+    semester: '2022-ODD',
+    rating: 4,
+    comments: 'Very helpful examples.',
+    tags: ['well-structured', 'good-examples'],
+    submitted_at: new ISODate('2022-12-01T09:00:00Z'),
+    attachments: [{ filename: 'assignment1.pdf', size_kb: 150 }]
+  },
+  {
+    student_id: 3,
+    course_code: 'CS101',
+    semester: '2022-ODD',
+    rating: 2,
+    comments: 'Pace was too fast for me.',
+    tags: ['challenging', 'fast-paced'],
+    submitted_at: new ISODate('2022-12-02T14:20:00Z'),
+    attachments: []
+  },
+  {
+    student_id: 4,
+    course_code: 'CS102',
+    semester: '2022-ODD',
+    rating: 5,
+    comments: 'Amazing course, absolutely loved it!',
+    tags: ['well-structured', 'interesting'],
+    submitted_at: new ISODate('2022-11-28T11:00:00Z'),
+    attachments: [{ filename: 'lab_notes.pdf', size_kb: 320 }]
+  },
+  {
+    student_id: 5,
+    course_code: 'CS102',
+    semester: '2021-EVEN',
+    rating: 3,
+    comments: 'Average experience.',
+    tags: ['moderate'],
+    submitted_at: new ISODate('2021-05-15T16:30:00Z'),
+    attachments: []
+  },
+  {
+    student_id: 6,
+    course_code: 'EE101',
+    semester: '2022-ODD',
+    rating: 4,
+    comments: 'Good lab equipment and guidance.',
+    tags: ['practical', 'good-examples'],
+    submitted_at: new ISODate('2022-12-05T10:00:00Z'),
+    attachments: [{ filename: 'circuit_diagram.pdf', size_kb: 500 }]
+  },
+  {
+    student_id: 7,
+    course_code: 'ME101',
+    semester: '2021-EVEN',
+    rating: 2,
+    comments: 'Difficult to follow online lectures.',
+    tags: ['challenging'],
+    submitted_at: new ISODate('2021-06-20T12:00:00Z'),
+    attachments: []
+  },
+  {
+    student_id: 8,
+    course_code: 'CS103',
+    semester: '2022-ODD',
+    rating: 5,
+    comments: 'Brilliant explanations by the professor.',
+    tags: ['well-structured', 'good-examples'],
+    submitted_at: new ISODate('2022-12-10T15:45:00Z'),
+    attachments: [{ filename: 'syllabus.pdf', size_kb: 120 }]
+  },
+  {
+    student_id: 9,
+    course_code: 'CE101',
+    semester: '2022-ODD',
+    rating: 1,
+    comments: 'Very unorganized schedule.',
+    tags: ['disorganized'],
+    submitted_at: new ISODate('2022-12-12T08:15:00Z'),
+    attachments: []
+  },
+  // Step 63: Document intentionally omitting the attachments field
+  {
+    student_id: 10,
+    course_code: 'CS103',
+    semester: '2022-ODD',
+    rating: 4,
+    comments: 'Decent introductory content.',
+    tags: ['good-examples']
+  }
+]);
+
+// Step 64: Verify document collection counts
+db.feedback.countDocuments();
+
+
+// -----------------------------------------------------------------------------
+// Task 2: CRUD Operations
+// -----------------------------------------------------------------------------
+
+// Step 65: READ - Find all feedback documents where rating is 5
+db.feedback.find({ rating: 5 });
+
+// Step 66: READ - Find feedback for CS101 matching 'challenging' array element value
+db.feedback.find({ course_code: 'CS101', tags: 'challenging' });
+
+// Step 67: READ - Isolate projection metrics (Exclude _id constraint)
+db.feedback.find({}, { student_id: 1, course_code: 1, rating: 1, _id: 0 });
+
+// Step 68: UPDATE - Inject evaluation metadata field for low scores ($rating < 3)
+db.feedback.updateMany({ rating: { $lt: 3 } }, { $set: { needs_review: true } });
+
+// Step 69: UPDATE - Append status tag to elements requiring evaluation
+db.feedback.updateMany({ needs_review: true }, { $push: { tags: 'reviewed' } });
+
+// Step 70: DELETE - Purge legacy timeline blocks
+db.feedback.deleteMany({ semester: '2021-EVEN' });
+
+
+// -----------------------------------------------------------------------------
+// Task 3: Aggregation Pipeline
+// -----------------------------------------------------------------------------
+
+// Step 71 & 72: Execution metrics collection pipeline with rounding transformations
+db.feedback.aggregate([
+  // Stage 1: Filter to target semester matching scope
+  { $match: { semester: '2022-ODD' } },
+  
+  // Stage 2: Consolidate records by course code metrics
+  {
+    $group: {
+      _id: '$course_code',
+      avg_rating: { $avg: '$rating' },
+      total_feedback: { $sum: 1 }
+    }
+  },
+  
+  // Stage 3: Order metrics sequentially by calculation results
+  { $sort: { avg_rating: -1 } },
+  
+  // Step 72 - Stage 4: Map presentation field aliases and compute precision values
+  {
+    $project: {
+      _id: 0,
+      course_code: '$_id',
+      total_feedback: 1,
+      average_rating: { $round: ['$avg_rating', 1] }
+    }
+  }
+]);
+
+// Step 73: Deconstruct arrays to compile frequency metrics
+db.feedback.aggregate([
+  // Stage 1: Flatten structural array components
+  { $unwind: '$tags' },
+  
+  // Stage 2: Calculate sum metrics per element
+  {
+    $group: {
+      _id: '$tags',
+      count: { $sum: 1 }
+    }
+  },
+  
+  // Stage 3: Sort by count frequency descending
+  { $sort: { count: -1 } }
+]);
+
+// Step 74: Generate performance indexes and evaluate plan efficiency patterns
+db.feedback.createIndex({ course_code: 1 });
+
+// Execution plan diagnostic evaluation verification command
+db.feedback.find({ course_code: 'CS101' }).explain('executionStats');
