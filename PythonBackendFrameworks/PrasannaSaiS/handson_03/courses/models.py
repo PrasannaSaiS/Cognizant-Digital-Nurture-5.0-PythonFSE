@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError
 from django.db import models
 
 
@@ -40,15 +39,6 @@ class Enrollment(models.Model):
 
     class Meta:
         unique_together = [['student', 'course']]
-
-    def clean(self):
-        super().clean()
-        if self.student_id and self.course_id and Enrollment.objects.filter(student=self.student, course=self.course).exists():
-            raise ValidationError({'__all__': 'A student cannot be enrolled in the same course twice.'})
-
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        return super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.student} -> {self.course}"
