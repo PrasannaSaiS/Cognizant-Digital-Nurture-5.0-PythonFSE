@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, status
+from fastapi import BackgroundTasks, Depends, FastAPI, HTTPException, Query, Response, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -103,7 +103,7 @@ async def delete_course(course_id: int, db: AsyncSession = Depends(get_db)):
 
     await db.delete(course)
     await db.commit()
-    return {'deleted': True}
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
 
 
 @app.get('/api/courses/{course_id}/students/', response_model=list[StudentResponse], tags=['Courses'])
