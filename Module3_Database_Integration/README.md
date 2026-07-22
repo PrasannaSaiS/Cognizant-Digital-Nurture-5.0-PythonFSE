@@ -16,7 +16,7 @@ The core objective is to design, implement, and optimize a backend database engi
 - Normalization Audit: Structured analytical review validating the data layer against 1NF, 2NF, and 3NF conditions.
 - Schema Evolution: Operational safe alters implementing CHECK conditions and table renames without data mutation.
 
-**[Hands-On 2] Writing SQL Queries — DML & AggregationsData Mutations:** 
+**[Hands-On 2] Writing SQL Queries - DML & AggregationsData Mutations:** 
 - Seeding initial ledger rows and modifying records using standard INSERT, UPDATE, and DELETE commands.
 - Relational Joins: Executing multi-table combinations (INNER JOIN, LEFT JOIN) to reveal missing relationships or track data flows.
 - Aggregations & Grouping: Extracting analytical reports utilizing GROUP BY and HAVING filters on computed evaluation items.
