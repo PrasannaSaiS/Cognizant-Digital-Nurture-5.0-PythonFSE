@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Portal - Async JavaScript</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script type="module" src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-title" href="#">Student Portal</a>
+      <nav aria-label="Primary navigation">
+        <ul class="nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Notifications</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Asynchronous Data Loading</h1>
+        <p>Loading courses and notifications with async/await and Axios.</p>
+      </section>
+
+      <section class="courses-section">
+        <h2>Courses</h2>
+        <p id="loading-courses">Loading courses...</p>
+        <div class="course-grid"></div>
+      </section>
+
+      <section class="notifications-section">
+        <h2>Notifications</h2>
+        <div id="loading-notifications" class="loading">Loading notifications...</div>
+        <div id="error-message" class="error-message"></div>
+        <button id="retry-button" class="retry-button" type="button">Retry</button>
+        <div id="notifications-list" class="notifications-list"></div>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Portal - JavaScript</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script type="module" src="app.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="site-title" href="#">Student Portal</a>
+      <nav aria-label="Primary navigation">
+        <ul class="nav-links">
+          <li><a href="#">Home</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="#">Grades</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <h1>Interactive Course Dashboard</h1>
+        <p>Search, sort, and explore your enrolled courses.</p>
+      </section>
+
+      <section class="controls">
+        <input id="search-courses" type="text" placeholder="Search courses..." />
+        <button id="sort-button" type="button">Sort by Credits</button>
+      </section>
+
+      <section class="courses">
+        <div class="course-grid"></div>
+        <p id="total-credits">Total Credits: 0</p>
+        <div id="selected-course" class="selected-course">Select a course to view details.</div>
+      </section>
+    </main>
+  </body>
+</html>

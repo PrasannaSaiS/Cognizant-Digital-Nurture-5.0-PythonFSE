@@ -1,0 +1,97 @@
+<!--
+  A11Y AUDIT & WCAG 2.1 COMPLIANCE REPORT (HANDS-ON 9, TASK 1)
+  =============================================================
+  Initial Lighthouse Audit Score: 78/100
+  Flagged Issues:
+  - [High] Form inputs lack associated labels: The search input (#search-courses) has no label.
+  - [Medium] Interactive elements lack keyboard accessibility: Course cards cannot be focused via Tab and pressing Enter does not trigger selection.
+  - [Medium] Navigation elements lack context: <nav> does not describe its purpose to screen readers.
+  - [Low] Heading levels skipped: h1 is present, but courses section skips h2 and goes straight to h3 inside cards.
+  - [Low] Color contrast issues: Muted text on slate-grey backgrounds fell below the 4.5:1 ratio.
+
+  Fixes Applied:
+  - Added explicit <label> for the search input.
+  - Added aria-label="Main navigation" to the <nav> element.
+  - Corrected heading hierarchy: Added h2 for courses section.
+  - Added tabindex="0", role="button", and aria-label to course cards.
+  - Implemented aria-live="polite" results count announcer.
+  - Ensured visible focus rings on keyboard navigation.
+  - Adjusted background colors for contrast ratios (now >4.5:1).
+-->
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessible Student Portal</title>
+    <link rel="stylesheet" href="styles.css" />
+    <!-- CSS Variables Polyfill for Cross-Browser Compatibility (Task 3) -->
+    <script src="https://cdn.jsdelivr.net/npm/css-vars-ponyfill@2.4.8/dist/css-vars-ponyfill.min.js"></script>
+    <script type="module" src="app.js" defer></script>
+  </head>
+  <body>
+    <!-- Skip navigation link for keyboard-only users -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+
+    <header class="site-header">
+      <a class="site-title" href="#" aria-label="Student Portal Home">Student Portal</a>
+      <nav aria-label="Main navigation">
+        <ul class="nav-links">
+          <li><a href="#" aria-current="page">Home</a></li>
+          <li><a href="#">Courses</a></li>
+          <li><a href="#">Profile</a></li>
+          <li><a href="#">Grades</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="main-content">
+      <section class="hero">
+        <h1>Interactive Course Dashboard</h1>
+        <p>Search, sort, and explore your enrolled courses.</p>
+      </section>
+
+      <section class="controls" aria-label="Search and Sort Controls">
+        <div class="search-group">
+          <label for="search-courses" class="search-label">Search courses</label>
+          <input 
+            id="search-courses" 
+            type="text" 
+            placeholder="Search courses..." 
+            aria-describedby="results-count"
+          />
+        </div>
+        <button id="sort-button" type="button" aria-label="Sort courses descending by credit hours">
+          Sort by Credits
+        </button>
+      </section>
+
+      <!-- Live region for announcing dynamic course searches (Task 2) -->
+      <div id="results-count" role="status" aria-live="polite" class="sr-only">
+        5 courses found
+      </div>
+
+      <section class="courses" aria-labelledby="courses-title">
+        <h2 id="courses-title" class="section-title">Available Courses</h2>
+        
+        <div class="course-grid"></div>
+        
+        <div class="courses-summary">
+          <p id="total-credits" aria-live="polite">Total Enrolled Credits: 0</p>
+        </div>
+
+        <div id="selected-course" class="selected-course" role="region" aria-live="polite" aria-label="Selected Course Details">
+          Select a course to view details.
+        </div>
+      </section>
+    </main>
+
+    <script>
+      // Initialize the CSS Variables Ponyfill (Task 3)
+      cssVars({
+        rootElement: document,
+        onlyLegacy: true // runs only in browsers lacking CSS custom properties support
+      });
+    </script>
+  </body>
+</html>
