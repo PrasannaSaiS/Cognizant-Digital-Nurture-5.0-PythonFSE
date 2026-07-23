@@ -4,7 +4,7 @@
 
 from sqlalchemy.orm import sessionmaker, joinedload
 from datetime import date
-from models import engine, Department, Student, Course, Enrollment, Professor
+from Module3_Database_Integration.PrasannaSaiS.hands_on_6.models import engine, Department, Student, Course, Enrollment, Professor
 
 # Step 80: Open a Session [cite: 439]
 Session = sessionmaker(bind=engine)
